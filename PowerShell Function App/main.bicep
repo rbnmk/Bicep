@@ -85,5 +85,6 @@ module functionapp '../_modules/mod-powershell-functionapp.bicep' = {
     logAnalyticsWorkspaceName: law.outputs.loganalyticsWorkspaceName
     webJobsStorageAccountName: sta.outputs.storageAccountName
     functionAppName: nc.outputs.FunctionAppName
+    tags: tags.outputs.tags
   }
 }
