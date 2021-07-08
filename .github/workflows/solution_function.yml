@@ -15,6 +15,14 @@ on:
   
 env:
   solution: psf 
+  company: 'hob'
+  solution: 'psf'
+  shortregion: 'we'
+  environment: 'p'
+  sequence: '01'
+  costcenter: 'HOB90001'
+  ownerEmail: 'email@hob.hob'
+  department: 'Hob IT'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -37,7 +45,7 @@ jobs:
       - name: Create Resource Group
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzResourceGroup -Name rg-we-${{ env.solution }}-p-001 -Location WestEurope
+          inlineScript: New-AzResourceGroup -Name rg-${{ env.shortregion }}-${{ env.company }}-${{ env.soution }}-${{ env.environment }}-${{ env.sequence }} -Location WestEurope
           azPSVersion: 'latest'
 
       - name: Deploy solution
