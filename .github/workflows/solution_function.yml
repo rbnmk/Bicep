@@ -54,8 +54,12 @@ jobs:
           azPSVersion: 'latest'
     
   DevDeploy:
+    needs: OpsDeploy
     runs-on: ubuntu-latest
     steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@master
+
       - name: Get WebApp/FunctionApp publish profile
         id: webapp
         uses: aliencube/publish-profile-actions@v1
