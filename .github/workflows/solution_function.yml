@@ -50,6 +50,6 @@ jobs:
       - name: Deploy solution
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzDeployment -TemplateFile "PowerShell Function App\main.bicep" -solution ${{ env.solution }} -Location WestEurope
+          inlineScript: New-AzDeployment -TemplateFile "PowerShell Function App\main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
           azPSVersion: 'latest'
       
