@@ -17,6 +17,7 @@ param logAnalyticsWorkspaceResourceGroupName string = resourceGroup().name
 param editMode string = 'readonly'
 param alwaysOn bool = true
 param tags object = {}
+param deployStagingslot bool = false
 
 var functionAppSlotName = 'staging'
 var stagingslot_tag = { 
@@ -137,7 +138,7 @@ resource functionAppName_Microsoft_Insights_LogAnalytics 'Microsoft.Web/sites/pr
   }
 }
 
-resource function_staging_slot 'Microsoft.Web/sites/slots@2021-01-01' = {
+resource function_staging_slot 'Microsoft.Web/sites/slots@2021-01-01' = if (deployStagingslot) {
   name: '${function.name}/${functionAppSlotName}'
   location: resourceGroup().location
   tags: stagingslot_tag
@@ -148,7 +149,7 @@ resource function_staging_slot 'Microsoft.Web/sites/slots@2021-01-01' = {
   }
 }
 
-resource functionAppName_functionAppSlotName_appsettings 'Microsoft.Web/sites/slots/config@2021-01-01' = {
+resource functionAppName_functionAppSlotName_appsettings 'Microsoft.Web/sites/slots/config@2021-01-01' = if (deployStagingslot) {
   name: '${function_staging_slot.name}/appsettings'
   properties: {
     DisableAllFunctions: 'false'

@@ -55,6 +55,8 @@ module asp '../_modules/mod-appserviceplan.bicep' = {
   params: {
     tags: tags.outputs.tags
     hostingPlanName: nc.outputs.AppServicePlanName
+    hostingPlanSkuName: 'B1'
+    hostingPlanSkuTier: 'Basic'
   }
 }
 
