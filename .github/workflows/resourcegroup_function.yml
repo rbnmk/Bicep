@@ -37,6 +37,6 @@ jobs:
       - name: Bicep PowerShell
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzDeployment -TemplateFile "Resource Groups/rg.bicep" -solution ${{ env.solution }}
+          inlineScript: New-AzDeployment -TemplateFile "Resource Groups/rg.bicep" -solution ${{ env.solution }} -Location WestEurope
           azPSVersion: 'latest'
       
