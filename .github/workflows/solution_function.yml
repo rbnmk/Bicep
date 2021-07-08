@@ -53,5 +53,5 @@ jobs:
           inlineScript: New-AzDeployment -TemplateFile "PowerShell Function App\main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
           azPSVersion: 'latest'
     
-    DevDeploy:
+    #DevDeploy:
       
