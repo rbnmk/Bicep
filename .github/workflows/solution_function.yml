@@ -44,7 +44,7 @@ jobs:
       - name: Create Resource Group
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzResourceGroup -Name rg-${{ env.shortregion }}-${{ env.company }}-${{ env.soution }}-${{ env.environment }}-${{ env.sequence }} -Location WestEurope
+          inlineScript: New-AzResourceGroup -Name rg-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }} -Location WestEurope
           azPSVersion: 'latest'
 
       - name: Deploy solution
