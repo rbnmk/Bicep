@@ -22,12 +22,18 @@ var ncManagedIdentity = 'mid-${shortregion}-${company}-${solution}-${environment
 var ncStorageAccount = replace('sta-${shortregion}-${company}-${solution}-${environment}-${sequence}', '-', '')
 var ncKeyVault = replace('kev-${shortregion}-${company}-${solution}-${environment}-${sequence}', '-', '')
 
+//App Resources
+var ncAppServicePlanName = 'asp-${shortregion}-${company}-${solution}-${environment}-${sequence}'
+var ncAppInsightsName = 'ais-${shortregion}-${company}-${solution}-${environment}-${sequence}'
+var ncFunctionAppName = 'fca-${shortregion}-${company}-${solution}-${environment}-${sequence}'
+var ncWebAppName = 'app-${shortregion}-${company}-${solution}-${environment}-${sequence}'
+
 // Shared Image Gallery Resources
 var ncSharedImageGalleryName = replace('sig-${shortregion}-${company}-${solution}-${environment}-${sequence}','-','')
 var ncSharedImageTemplateName = 'img-${shortregion}-${company}-${solution}-${environment}-${sequence}'
 
 // WvD Components
-var ncWvdHostpoolName = 'sig-${shortregion}-${company}-${solution}-${environment}-${sequence}'
+var ncWvdHostpoolName = 'hsp-${shortregion}-${company}-${solution}-${environment}-${sequence}'
 var ncWvdAppgroupName = 'apg-${shortregion}-${company}-${solution}-${environment}-${sequence}'
 var ncWvdworkspaceName = 'wpc-${shortregion}-${company}-${solution}-${environment}-${sequence}'
 
@@ -45,3 +51,7 @@ output SharedImageTemplateName string = ncSharedImageTemplateName
 output WvdHostpoolName string = ncWvdHostpoolName
 output WvdAppgroupName string = ncWvdAppgroupName
 output WvdworkspaceName string = ncWvdworkspaceName
+output AppServicePlanName string = ncAppServicePlanName
+output FunctionAppName string = ncFunctionAppName
+output WebAppName string = ncWebAppName
+output AppInsightsName string = ncAppInsightsName
