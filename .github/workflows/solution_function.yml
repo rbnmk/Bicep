@@ -16,7 +16,6 @@ on:
 env:
   solution: psf 
   company: 'hob'
-  solution: 'psf'
   shortregion: 'we'
   environment: 'p'
   sequence: '01'
