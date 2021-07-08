@@ -60,6 +60,12 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@master
 
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.azure }}
+          enable-AzPSSession: true
+
       - name: Get WebApp/FunctionApp publish profile
         id: webapp
         uses: aliencube/publish-profile-actions@v1
