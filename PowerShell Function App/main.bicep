@@ -13,7 +13,7 @@ param ownerEmail string = 'email@hob.hob'
 param department string = 'Hob IT'
 
 // Define the resource group here because we need to be able to calculate the scope before deployment.
-var resourceGroupName = 'rg-${shortregion}-${company}-${solution}-${environment}-mgt-${sequence}'
+var resourceGroupName = 'rg-${shortregion}-${company}-${solution}-${environment}-${sequence}'
 
 module nc '../_modules/mod-naming-convention.bicep' = {
   name: 'NamingConvention'
