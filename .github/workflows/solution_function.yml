@@ -34,9 +34,15 @@ jobs:
           creds: ${{ secrets.azure }}
           enable-AzPSSession: true
           
-      - name: Bicep PowerShell
+      - name: Create Resource Group
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzDeployment -TemplateFile "Resource Groups/rg.bicep" -solution ${{ env.solution }} -Location WestEurope
+          inlineScript: New-AzResourceGroup -Name rg-we-${{ env.solution }}-p-001 -Location WestEurope
+          azPSVersion: 'latest'
+
+      - name: Deploy solution
+        uses: azure/powershell@v1
+        with:
+          inlineScript: New-AzDeployment -TemplateFile "PowerShell Function App\main.bicep" -solution ${{ env.solution }} -Location WestEurope
           azPSVersion: 'latest'
       
