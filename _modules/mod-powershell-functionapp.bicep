@@ -89,7 +89,7 @@ resource functionAppName_slotConfigNames 'Microsoft.Web/sites/config@2018-11-01'
 }
 
 resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
-  name: '${function}/appsettings'
+  name: '${function.name}/appsettings'
   properties: {
     DisableAllFunctions: 'false'
     AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${webjobstorageaccount.name};AccountKey=${listKeys(webjobstorageaccount.id, '2021-04-01').keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
