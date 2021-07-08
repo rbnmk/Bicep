@@ -56,22 +56,31 @@ jobs:
   DevDeploy:
     runs-on: ubuntu-latest
     steps:
-      steps:
-        - name: Get WebApp/FunctionApp publish profile
-          id: webapp
-          uses: aliencube/publish-profile-actions@v1
-          env:
-            AZURE_CREDENTIALS: ${{ secrets.azure }}
-          with:
-            resourceGroupName: rg-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }}
-            appName: fca-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }}
-        
-        - name: 'Run Azure Functions Action'
-          uses: Azure/functions-action@v1
-          id: fa
-          with:
-            app-name: fca-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }}
-            package: "PowerShell Function App/src"
-            publish-profile: ${{ steps.webapp.outputs.profile }}
-        
+      - name: Get WebApp/FunctionApp publish profile
+        id: webapp
+        uses: aliencube/publish-profile-actions@v1
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.azure }}
+        with:
+          resourceGroupName: rg-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }}
+          appName: fca-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }}
+      
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: fca-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }}
+          package: "PowerShell Function App/src"
+          publish-profile: ${{ steps.webapp.outputs.profile }}
+
+      - name: Get WebApp/FunctionApp publish profile
+        id: webapp
+        uses: aliencube/publish-profile-actions@v1
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.azure }}
+        with:
+          resourceGroupName: rg-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }}
+          appName: fca-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }}
+          reset: true
+      
       
