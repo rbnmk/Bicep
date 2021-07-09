@@ -16,7 +16,7 @@ resource imagetemplatedef 'Microsoft.Compute/galleries/images@2020-09-30' = {
   properties: {
     osState: 'Generalized'
     osType: 'Windows'
-    description: 'Santeon WvD Golden image'
+    description: ''
     purchasePlan: {
       publisher: 'Macaw'
     }
@@ -56,9 +56,9 @@ resource imageTemplateName_resource 'Microsoft.VirtualMachineImages/imageTemplat
     }
     source: {
       type: 'PlatformImage'
-      publisher: 'MicrosoftWindowsDesktop'
-      offer: 'Windows-10'
-      sku: '21h1-evd'
+      publisher: 'MicrosoftWindowsServer'
+      offer: 'WindowsServer'
+      sku: '2019-datacenter'
       version: 'latest'
     }
     customize: [
@@ -79,45 +79,8 @@ resource imageTemplateName_resource 'Microsoft.VirtualMachineImages/imageTemplat
         runAsSystem: true
         runElevated: true
         inline: [
-          'choco install git notepadplusplus.install az.powershell azure-cli bicep microsoftazurestorageexplorer vscode r.studio powerbi --yes --no-progress'
+          'choco install git az.powershell azure-cli bicep azcopy10 --yes --no-progress'
           'Write-Host "Choco tool install completed!"'
-        ]
-      }
-      {
-        type: 'PowerShell'
-        name: 'InstallFsLogix'
-        runAsSystem: true
-        runElevated: true
-        scriptUri: 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/0_installConfFsLogix.ps1'
-        validExitCodes: [
-          1
-          0
-        ]
-      }
-      {
-        type: 'PowerShell'
-        name: 'OptimizeOS'
-        runAsSystem: true
-        runElevated: true
-        scriptUri: 'https://raw.githubusercontent.com/rbnmk/PowerShell/master/WvD-Optimize-W10.ps1'
-        validExitCodes: [
-          1
-          0
-        ]
-      }
-      {
-        type: 'WindowsRestart'
-        restartTimeout: '10m'
-      }
-      {
-        type: 'PowerShell'
-        name: 'InstallTeams'
-        runAsSystem: true
-        runElevated: true
-        scriptUri: 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/2_installTeams.ps1'
-        validExitCodes: [
-          1
-          0
         ]
       }
       {
