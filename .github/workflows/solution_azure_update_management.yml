@@ -48,7 +48,7 @@ jobs:
       - name: Deploy Azure Update Management Infrastructure
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzDeployment -TemplateFile "Azure Update Management/main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
+          inlineScript: New-AzDeployment -Name bicep-${{ env.GITHUB_RUN_ID }} -TemplateFile "Azure Update Management/main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
           azPSVersion: 'latest'
       
       
