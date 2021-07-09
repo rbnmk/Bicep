@@ -38,6 +38,7 @@ resource linkedservice_AutomationAccount 'Microsoft.OperationalInsights/workspac
 resource solution_vminsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = if (enableVMInsights) {
   name: 'VMInsights(${law.name})'
   tags: tags
+  location: location
   properties: {
     workspaceResourceId: law.id
   }
@@ -52,6 +53,7 @@ resource solution_vminsights 'Microsoft.OperationsManagement/solutions@2015-11-0
 resource solution_updates 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = if (enableUpdateManagement && linkAutomationAccount) {
   name: 'Updates(${law.name})'
   tags: tags
+  location: location
   properties: {
     workspaceResourceId: law.id
   }
@@ -66,6 +68,7 @@ resource solution_updates 'Microsoft.OperationsManagement/solutions@2015-11-01-p
 resource solution_antimalware 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = if (enableAntiMalware) {
   name: 'AntiMalware(${law.name})'
   tags: tags
+  location: location
   properties: {
     workspaceResourceId: law.id
   }
@@ -80,6 +83,7 @@ resource solution_antimalware 'Microsoft.OperationsManagement/solutions@2015-11-
 resource solution_sql_assessment 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = if (enableSQLAssessment) {
   name: 'SQLAssessment(${law.name})'
   tags: tags
+  location: location
   properties: {
     workspaceResourceId: law.id
   }
