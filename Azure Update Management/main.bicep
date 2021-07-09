@@ -59,5 +59,6 @@ module law '../_modules/mod-loganalytics.bicep' = {
     loganalyticsWorkspaceName: nc.outputs.LogAnalyticsWorkspaceName
     automationAccountName: aut.outputs.automationAccount
     linkAutomationAccount: true
+    enableUpdateManagement: true
   }
 }
