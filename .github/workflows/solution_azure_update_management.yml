@@ -45,7 +45,7 @@ jobs:
           inlineScript: New-AzResourceGroup -Name rg-${{ env.shortregion }}-${{ env.company }}-${{ env.solution }}-${{ env.environment }}-${{ env.sequence }} -Location WestEurope -Force
           azPSVersion: 'latest'
 
-      - name: Deploy Azure Image Builder Infrastructure
+      - name: Deploy Azure Update Management Infrastructure
         uses: azure/powershell@v1
         with:
           inlineScript: New-AzDeployment -TemplateFile "Azure Update Management/main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
