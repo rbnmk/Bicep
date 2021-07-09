@@ -18,12 +18,12 @@ resource imagetemplatedef 'Microsoft.Compute/galleries/images@2020-09-30' = {
     osType: 'Windows'
     description: ''
     purchasePlan: {
-      publisher: 'Macaw'
+      publisher: ''
     }
     identifier: {
       offer: imageTemplateName
-      sku: '10wvd'
-      publisher: 'Macaw'
+      sku: ''
+      publisher: ''
     }
     recommended: {
       vCPUs: {
