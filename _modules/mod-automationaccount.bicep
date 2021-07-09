@@ -1,3 +1,5 @@
+targetScope = 'resourceGroup'
+
 @description('Name for the automation account')
 param automationAccountName string
 param tags object = {}
