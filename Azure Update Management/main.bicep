@@ -1,3 +1,5 @@
+targetScope = 'subscription'
+
 //naming convention common parameters
 param company string = 'hob'
 param solution string = 'upd'
