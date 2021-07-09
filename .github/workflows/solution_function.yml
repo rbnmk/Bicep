@@ -12,6 +12,7 @@ on:
       - 'PowerShell Function App'
   pull_request:
     branches: [ master ]
+    paths:
       - '_modules/mod-powershell-functionapp'
       - 'PowerShell Function App'
 

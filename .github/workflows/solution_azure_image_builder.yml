@@ -10,6 +10,7 @@ on:
       - Azure Image Builder
   pull_request:
     branches: [ master ]
+    paths:
       - '_modules/mod-aib-server-2019.bicep'
       - Azure Image Builder
 
