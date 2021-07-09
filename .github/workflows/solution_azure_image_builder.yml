@@ -7,12 +7,12 @@ on:
     branches: [ master ]
     paths:
       - '_modules/mod-aib-server-2019.bicep'
-      - Azure Image Builder
+      - 'Azure Image Builder/*'
   pull_request:
     branches: [ master ]
     paths:
       - '_modules/mod-aib-server-2019.bicep'
-      - Azure Image Builder
+      - 'Azure Image Builder/*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
