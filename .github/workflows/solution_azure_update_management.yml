@@ -44,7 +44,7 @@ jobs:
       - name: Test Azure Update Management Infrastructure
         uses: azure/powershell@v1
         with:
-          inlineScript: Test-AzDeployment -Name bicep-${{ env.GITHUB_RUN_ID }} -TemplateFile "Azure Update Management/main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
+          inlineScript: Test-AzDeployment -TemplateFile "Azure Update Management/main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
           azPSVersion: "latest"
 
   PreviewIaC:
@@ -62,7 +62,7 @@ jobs:
       - name: Preview Azure Update Management Infrastructure
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzDeployment -WhatIf -Name bicep-${{ env.GITHUB_RUN_ID }} -TemplateFile "Azure Update Management/main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
+          inlineScript: New-AzDeployment -WhatIf -TemplateFile "Azure Update Management/main.bicep" -solution ${{ env.solution }} -environment ${{ env.environment }} -Location WestEurope
           azPSVersion: "latest"
 
   DeployIaC:
