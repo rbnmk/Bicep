@@ -16,14 +16,14 @@ resource imagetemplatedef 'Microsoft.Compute/galleries/images@2020-09-30' = {
   properties: {
     osState: 'Generalized'
     osType: 'Windows'
-    description: ''
+    description: 'Server 2019 DevOps Agent'
     purchasePlan: {
       publisher: ''
     }
     identifier: {
       offer: imageTemplateName
-      sku: ''
-      publisher: ''
+      sku: 'default'
+      publisher: 'rbnmk'
     }
     recommended: {
       vCPUs: {
@@ -79,8 +79,20 @@ resource imageTemplateName_resource 'Microsoft.VirtualMachineImages/imageTemplat
         runAsSystem: true
         runElevated: true
         inline: [
-          'choco install git az.powershell azure-cli bicep azcopy10 --yes --no-progress'
+          'choco install pwsh git az.powershell azure-cli bicep azcopy10 dotnetcore choco install dotnetcore-sdk dotnet4.7 azure-functions-core-tools-3 --yes --no-progress'
           'Write-Host "Choco tool install completed!"'
+        ]
+      }
+      {
+        type: 'PowerShell'
+        name: 'Install PowerShell Modules'
+        runAsSystem: true
+        runElevated: true
+        inline: [
+          'Install-Module Pester -Force'
+          'Install-Module MarkdownPS -Force'
+          'Install-Module SqlServer -Force'
+          'Install-Module VSSetup -Force'
         ]
       }
       {
