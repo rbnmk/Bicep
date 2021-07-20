@@ -1,0 +1,1174 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "actionGroupName": {
+            "value": "Azure Monitoring"
+        },
+        "actionGroupShortName": {
+            "value": "MON"
+        },
+        "emailReceivers": {
+            "value": [
+                {
+                    "name": "Azure Monitoring",
+                    "emailAddress": "monitor@customer.nl",
+                    "useCommonAlertSchema": "True"
+                }
+            ]
+        },
+        "vm_scheduledQueryRules": {
+            "value": [
+                {
+                    "name": "Memory usage exceeded the threshold",
+                    "properties": {
+                        "description": "Please check the server for processes that cause heavy load.",
+                        "enabled": "true",
+                        "source": {
+                            "authorizedResources": [],
+                            "query": "InsightsMetrics | where Origin == 'vm.azm.ms'| where Namespace == 'Memory' and Name == 'AvailableMB'| extend TotalMemory = toreal(todynamic(Tags)['vm.azm.ms/memorySizeMB'])| extend AvailableMemoryPercentage = (toreal(Val) / TotalMemory) * 100.0| summarize AggregatedValue = avg(AvailableMemoryPercentage) by bin(TimeGenerated, 15m), Computer",
+                            "queryType": "ResultCount"
+                        },
+                        "schedule": {
+                            "frequencyInMinutes": 15,
+                            "timeWindowInMinutes": 60
+                        },
+                        "action": {
+                            "severity": 2,
+                            "throttlingInMin": 0,
+                            "trigger": {
+                                "thresholdOperator": "LessThan",
+                                "threshold": 10,
+                                "metricTrigger": {
+                                    "thresholdOperator": "GreaterThan",
+                                    "threshold": 3,
+                                    "metricTriggerType": "Consecutive",
+                                    "metricColumn": "Computer"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Disk space is below the threshold",
+                    "properties": {
+                        "description": "The volume on a computer is below 10%.",
+                        "enabled": "true",
+                        "source": {
+                            "authorizedResources": [],
+                            "query": "InsightsMetrics | where Origin == 'vm.azm.ms' | where Namespace == 'LogicalDisk' and Name == 'FreeSpacePercentage' | summarize AggregatedValue = avg(Val) by bin(TimeGenerated, 15m), Computer, _ResourceId",
+                            "queryType": "ResultCount"
+                        },
+                        "schedule": {
+                            "frequencyInMinutes": 15,
+                            "timeWindowInMinutes": 60
+                        },
+                        "action": {
+                            "severity": 1,
+                            "throttlingInMin": 0,
+                            "trigger": {
+                                "thresholdOperator": "LessThan",
+                                "threshold": 10,
+                                "metricTrigger": {
+                                    "thresholdOperator": "GreaterThan",
+                                    "threshold": 4,
+                                    "metricTriggerType": "Consecutive",
+                                    "metricColumn": "Computer, VolumeName"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Disk space usage exceeded the threshold",
+                    "properties": {
+                        "description": "The volume on a linux computer is below 10%.",
+                        "enabled": "false",
+                        "source": {
+                            "authorizedResources": [],
+                            "query": "Perf | where ObjectName == \"Logical Disk\" and CounterName == \"% Used Space\"  and InstanceName == \"/\" | summarize AggregatedValue = avg(CounterValue) by Computer, VolumeName = InstanceName, bin(TimeGenerated, 5m)",
+                            "queryType": "ResultCount"
+                        },
+                        "schedule": {
+                            "frequencyInMinutes": 15,
+                            "timeWindowInMinutes": 60
+                        },
+                        "action": {
+                            "severity": "2",
+                            "throttlingInMin": 0,
+                            "trigger": {
+                                "thresholdOperator": "GreaterThan",
+                                "threshold": 90,
+                                "metricTrigger": {
+                                    "thresholdOperator": "GreaterThan",
+                                    "threshold": 4,
+                                    "metricTriggerType": "Consecutive",
+                                    "metricColumn": "Computer, VolumeName"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "No heartbeat from computer",
+                    "properties": {
+                        "description": "The computer did not report to Log analytics in the last 5 minutes. Please check if the computer is responsive.",
+                        "enabled": "true",
+                        "source": {
+                            "authorizedResources": [],
+                            "query": "Heartbeat | summarize LastHeartbeat=max(TimeGenerated) by Computer | where LastHeartbeat < ago(5m)",
+                            "queryType": "ResultCount"
+                        },
+                        "schedule": {
+                            "frequencyInMinutes": 5,
+                            "timeWindowInMinutes": 5
+                        },
+                        "action": {
+                            "severity": 1,
+                            "throttlingInMin": 0,
+                            "trigger": {
+                                "thresholdOperator": "GreaterThan",
+                                "threshold": 0,
+                                "metricTrigger": {
+                                    "thresholdOperator": "GreaterThan",
+                                    "threshold": 0,
+                                    "metricTriggerType": "Total",
+                                    "metricColumn": "Computer, _ResourceId"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "rsv_scheduledQueryRules": {
+            "value": [
+                {
+                    "name": "Recovery Services Vault failed backup",
+                    "properties": {
+                        "description": "Please check the detailed logs for more information.",
+                        "enabled": "true",
+                        "source": {
+                            "authorizedResources": [],
+                            "query": "AzureDiagnostics | where Category == 'AzureBackupReport' and OperationName == 'Job' and JobFailureCode_s != 'Success'| summarize AggregatedValue = count() by _ResourceId,tostring(split(ProtectedContainerUniqueId_s,';',4)),bin(TimeGenerated, 5m)",
+                            "queryType": "ResultCount"
+                        },
+                        "schedule": {
+                            "frequencyInMinutes": 60,
+                            "timeWindowInMinutes": 60
+                        },
+                        "action": {
+                            "severity": 1,
+                            "throttlingInMin": 0,
+                            "trigger": {
+                                "thresholdOperator": "GreaterThan",
+                                "threshold": 0,
+                                "metricTrigger": {
+                                    "thresholdOperator": "GreaterThan",
+                                    "threshold": 0,
+                                    "metricTriggerType": "Total",
+                                    "metricColumn": "ProtectedContainerUniqueId_s"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "vm_metricAlerts": {
+            "value": [
+                {
+                    "name": "CPU Average percentage exceeded threshold",
+                    "properties": {
+                        "description": "Check the server processes that are causing heavy load",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT15M",
+                        "targetResourceType": "microsoft.compute/virtualmachines",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 80,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.compute/virtualmachines",
+                                    "metricName": "Percentage CPU",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "OS Disk - Disk Queue Depth exceeded threshold",
+                    "properties": {
+                        "description": "Check the server processes that are causing heavy load",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT15M",
+                        "targetResourceType": "microsoft.compute/virtualmachines",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 5,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.compute/virtualmachines",
+                                    "metricName": "OS Disk Queue Depth",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "Data Disk - Disk Queue Depth exceeded threshold",
+                    "properties": {
+                        "description": "Check the server processes that are causing heavy load",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT15M",
+                        "targetResourceType": "microsoft.compute/virtualmachines",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 5,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.compute/virtualmachines",
+                                    "metricName": "Data Disk Queue Depth",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "VM Cached IOPS Consumed Percentage exceeded threshold",
+                    "properties": {
+                        "description": "Check the individual disk metrics and the application load to find the cause of high IOPS",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT15M",
+                        "targetResourceType": "microsoft.compute/virtualmachines",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 65,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.compute/virtualmachines",
+                                    "metricName": "VM Cached IOPS Consumed Percentage",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "VM Cached Bandwidth Consumed Percentage exceeded threshold",
+                    "properties": {
+                        "description": "Check the individual disk metrics and the application load to find the cause of high IOPS",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT15M",
+                        "targetResourceType": "microsoft.compute/virtualmachines",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 65,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.compute/virtualmachines",
+                                    "metricName": "VM Cached Bandwidth Consumed Percentage",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "VM uncached IOPS Consumed Percentage exceeded threshold",
+                    "properties": {
+                        "description": "Check the individual disk metrics and the application load to find the cause of high IOPS",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT15M",
+                        "targetResourceType": "microsoft.compute/virtualmachines",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 65,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.compute/virtualmachines",
+                                    "metricName": "VM uncached IOPS Consumed Percentage",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "VM Uncached Bandwidth Consumed Percentage exceeded threshold",
+                    "properties": {
+                        "description": "Check the individual disk metrics and the application load to find the cause of high IOPS",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT15M",
+                        "targetResourceType": "microsoft.compute/virtualmachines",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 65,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.compute/virtualmachines",
+                                    "metricName": "VM Uncached Bandwidth Consumed Percentage",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "asp_metricAlerts": {
+            "value": [
+                {
+                    "name": "Http Queue Length Average percentage exceeded threshold",
+                    "properties": {
+                        "description": "The average number of HTTP requests that had to sit on the queue before being fulfilled. A high or increasing HTTP Queue length is a symptom of a plan under heavy load.",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Web/serverfarms",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 10,
+                                    "name": "Metric",
+                                    "metricNamespace": "Microsoft.Web/serverfarms",
+                                    "metricName": "HttpQueueLength",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "Disk Queue Length Average percentage exceeded threshold",
+                    "properties": {
+                        "description": "The average number of both read and write requests that were queued on storage. A high disk queue length is an indication of an app that might be slowing down because of excessive disk I/O.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Web/serverfarms",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 15,
+                                    "name": "Metric",
+                                    "metricNamespace": "Microsoft.Web/serverfarms",
+                                    "metricName": "DiskQueueLength",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "Memory Percentage Average percentage exceeded threshold",
+                    "properties": {
+                        "description": "The average memory used across all instances of the plan has exceeded the threshold",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Web/serverfarms",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 90,
+                                    "name": "Metric",
+                                    "metricNamespace": "Microsoft.Web/serverfarms",
+                                    "metricName": "MemoryPercentage",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "CPU Percentage Average percentage exceeded threshold",
+                    "properties": {
+                        "description": "The average CPU used across all instances of the plan. Check the instances that are causing heavy load",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Web/serverfarms",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 90,
+                                    "name": "Metric",
+                                    "metricNamespace": "Microsoft.Web/serverfarms",
+                                    "metricName": "CpuPercentage",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "search_metricAlerts": {
+            "value": [
+                {
+                    "name": "Azure Search search latency exceeded the threshold",
+                    "properties": {
+                        "description": "Check the Azure Search service",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "microsoft.search/searchservices",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 5000,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.search/searchservices",
+                                    "metricName": "SearchLatency",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "Azure Search throttled search queries percentage has exceeded the threshold",
+                    "properties": {
+                        "description": "Percentage of search queries that were throttled for the search service will slow down search results.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "microsoft.search/searchservices",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 30,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.search/searchservices",
+                                    "metricName": "ThrottledSearchQueriesPercentage",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "sites_metricAlerts": {
+            "value": [
+                {
+                    "name": "HttpResponseTime Average percentage exceeded threshold",
+                    "properties": {
+                        "description": "The time taken for the app to serve requests is longer than 5 seconds.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Web/sites",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 5,
+                                    "name": "Metric",
+                                    "metricNamespace": "Microsoft.Web/sites",
+                                    "metricName": "HttpResponseTime",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "sqlep_metricAlerts": {
+            "value": [
+                {
+                    "name": "SQL Elastic Pool DTU percentage exceeded the threshold",
+                    "properties": {
+                        "description": "Check individual databases to figure out what is causing the load.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "microsoft.sql/servers/elasticpools",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 90,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.sql/servers/elasticpools",
+                                    "metricName": "dtu_consumption_percent",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "SQL Elastic Pool Workers percentage exceeded the threshold",
+                    "properties": {
+                        "description": "Check the elastic pool or related components for potential issues.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "microsoft.sql/servers/elasticpools",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 85,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.sql/servers/elasticpools",
+                                    "metricName": "workers_percent",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "SQL Elastic Pool Log IO percentage exceeded the threshold",
+                    "properties": {
+                        "description": "Check the elastic pool or related components for potential issues.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "microsoft.sql/servers/elasticpools",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 90,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.sql/servers/elasticpools",
+                                    "metricName": "log_write_percent",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "sqldb_metricAlerts": {
+            "value": [
+                {
+                    "name": "SQL Database average CPU exceeded the threshold",
+                    "properties": {
+                        "description": "SQL DB is under high load for the past 60 minutes.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Sql/servers/databases",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 90,
+                                    "name": "Metric",
+                                    "metricNamespace": "Microsoft.Sql/servers/databases",
+                                    "metricName": "cpu_percent",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "SQL Database DTU has exceeded the threshold",
+                    "properties": {
+                        "description": "SQL DB is under high load for the past 60 minutes.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Sql/servers/databases",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 90,
+                                    "name": "Metric",
+                                    "metricNamespace": "Microsoft.Sql/servers/databases",
+                                    "metricName": "dtu_consumption_percent",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "agw_metricAlerts": {
+            "value": [
+                {
+                    "name": "Unhealthy host count",
+                    "location": "global",
+                    "properties": {
+                        "description": "The backend pool of the application gateway is not healthy, some servers are or could have been temporarily inaccessible.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1M",
+                        "windowSize": "PT15M",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 1,
+                                    "name": "Metric1",
+                                    "metricNamespace": "Microsoft.Network/applicationGateways",
+                                    "metricName": "UnhealthyHostCount",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        },
+                        "autoMitigate": true,
+                        "targetResourceType": "Microsoft.Network/applicationGateways"
+                    }
+                }
+            ]
+        },
+        "redis_metricAlerts": {
+            "value": [
+                {
+                    "name": "Redis Cache CPU processor time exceeded the threshold",
+                    "properties": {
+                        "description": "Check the redis processes that are causing heavy load",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "microsoft.cache/redis",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 90,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.cache/redis",
+                                    "metricName": "percentProcessorTime",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Maximum",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "Redis Cache used memory percentage has exceeded the threshold",
+                    "properties": {
+                        "description": "Redis cache could be having problems storing cache.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "microsoft.cache/redis",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 95,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.cache/redis",
+                                    "metricName": "usedmemorypercentage",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Maximum",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "Redis Cache server load exceeded the threshold",
+                    "properties": {
+                        "description": "The redis cache serverLoad is too high.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT15M",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "microsoft.cache/redis",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 95,
+                                    "name": "Metric",
+                                    "metricNamespace": "microsoft.cache/redis",
+                                    "metricName": "serverLoad",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Maximum",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "kv_metricAlerts": {
+            "value": [
+                {
+                    "name": "Key Vault availability is below threshold",
+                    "properties": {
+                        "description": "The Key Vault availability is below 100%.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT15M",
+                        "targetResourceType": "Microsoft.KeyVault/vaults",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 100,
+                                    "name": "Metric",
+                                    "metricNamespace": "Microsoft.KeyVault/vaults",
+                                    "metricName": "Availability",
+                                    "dimensions": [],
+                                    "operator": "lessThan",
+                                    "timeAggregation": "Average",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "aut_metricAlerts": {
+            "value": [
+                {
+                    "name": "Runbooks failed in the last day",
+                    "properties": {
+                        "description": "Runbook(s) failed in the last day for Automation account. Please check if there is a problem with the Runbook.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1H",
+                        "windowSize": "P1D",
+                        "targetResourceType": "Microsoft.Automation/automationAccounts",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 10,
+                                    "name": "Metric1",
+                                    "metricNamespace": "microsoft.automation/automationaccounts",
+                                    "metricName": "TotalJob",
+                                    "dimensions": [
+                                        {
+                                            "name": "Runbook",
+                                            "operator": "Include",
+                                            "values": [
+                                                "*"
+                                            ]
+                                        },
+                                        {
+                                            "name": "Status",
+                                            "operator": "Include",
+                                            "values": [
+                                                "Failed"
+                                            ]
+                                        }
+                                    ],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Count",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "Update management computer deployment run failed",
+                    "properties": {
+                        "description": "Computer failed to update, please check with MW team.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1H",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Automation/automationAccounts",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 0,
+                                    "name": "Metric1",
+                                    "metricNamespace": "microsoft.automation/automationaccounts",
+                                    "metricName": "TotalUpdateDeploymentMachineRuns",
+                                    "dimensions": [
+                                        {
+                                            "name": "SoftwareUpdateConfigurationName",
+                                            "operator": "Include",
+                                            "values": [
+                                                "*"
+                                            ]
+                                        },
+                                        {
+                                            "name": "TargetComputer",
+                                            "operator": "Include",
+                                            "values": [
+                                                "*"
+                                            ]
+                                        },
+                                        {
+                                            "name": "Status",
+                                            "operator": "Include",
+                                            "values": [
+                                                "Failed"
+                                            ]
+                                        }
+                                    ],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Count",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                        }
+                    }
+                },
+                {
+                    "name": "Update management deployment run failed",
+                    "properties": {
+                        "description": "An update deployment run failed. Please check with MW team.",
+                        "severity": 1,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1H",
+                        "windowSize": "PT1H",
+                        "targetResourceType": "Microsoft.Automation/automationAccounts",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 0,
+                                    "name": "Metric1",
+                                    "metricNamespace": "microsoft.automation/automationaccounts",
+                                    "metricName": "TotalUpdateDeploymentMachineRuns",
+                                    "dimensions": [
+                                        {
+                                            "name": "SoftwareUpdateConfigurationName",
+                                            "operator": "Include",
+                                            "values": [
+                                                "*"
+                                            ]
+                                        },
+                                        {
+                                            "name": "Status",
+                                            "operator": "Include",
+                                            "values": [
+                                                "Failed"
+                                            ]
+                                        }
+                                    ],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Count",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                        }
+                    }
+                }
+            ]
+        },
+        "sb_metricAlerts": {
+            "value": [
+                {
+                    "name": "ServerErrors",
+                    "properties": {
+                        "description": "The sum of server errors over a period of 5 minutes was greather than 0",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1M",
+                        "windowSize": "PT5M",
+                        "criteria": {
+                            "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+                            "allOf": [
+                                {
+                                    "name": "1st criterion",
+                                    "metricName": "ServerErrors",
+                                    "dimensions": [
+                                        {
+                                            "name": "EntityName",
+                                            "operator": "Include",
+                                            "values": [
+                                                "*"
+                                            ]
+                                        }
+                                    ],
+                                    "operator": "GreaterThan",
+                                    "threshold": 0,
+                                    "timeAggregation": "Average"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "UserErrors",
+                    "properties": {
+                        "description": "The sum of user errors over a period of 5 minutes was greather than 0",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1M",
+                        "windowSize": "PT5M",
+                        "criteria": {
+                            "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+                            "allOf": [
+                                {
+                                    "name": "1st criterion",
+                                    "metricName": "UserErrors",
+                                    "dimensions": [
+                                        {
+                                            "name": "EntityName",
+                                            "operator": "Include",
+                                            "values": [
+                                                "*"
+                                            ]
+                                        }
+                                    ],
+                                    "operator": "GreaterThan",
+                                    "threshold": 0,
+                                    "timeAggregation": "Average"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "DeadLetteredMessages",
+                    "properties": {
+                        "description": "The sum of dead lettered messages over a period of 5 minutes was greather than 10",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1M",
+                        "windowSize": "PT5M",
+                        "criteria": {
+                            "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+                            "allOf": [
+                                {
+                                    "name": "1st criterion",
+                                    "metricName": "DeadLetteredMessages",
+                                    "dimensions": [
+                                        {
+                                            "name": "EntityName",
+                                            "operator": "Include",
+                                            "values": [
+                                                "*"
+                                            ]
+                                        }
+                                    ],
+                                    "operator": "GreaterThan",
+                                    "threshold": 0,
+                                    "timeAggregation": "Average"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "adf_metricAlerts": {
+            "value": [
+                {
+                    "name": "Failed pipeline runs",
+                    "location": "global",
+                    "properties": {
+                        "description": "More than 10 failed pipeline runs in the last hour.",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1H",
+                        "windowSize": "PT1H",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 10,
+                                    "name": "Metric1",
+                                    "metricNamespace": "Microsoft.DataFactory/factories",
+                                    "metricName": "PipelineFailedRuns",
+                                    "dimensions": [
+                                        {
+                                            "name": "FailureType",
+                                            "operator": "Include",
+                                            "values": [
+                                                "UserError",
+                                                "SystemError",
+                                                "BadGateway"
+                                            ]
+                                        }
+                                    ],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Total",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        },
+                        "autoMitigate": true,
+                        "targetResourceType": "Microsoft.DataFactory/factories"
+                    }
+                },
+                {
+                    "name": "Activity failed runs",
+                    "location": "global",
+                    "properties": {
+                        "description": "More than 10 failed activity runs in the last hour.",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1H",
+                        "windowSize": "PT1H",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 10,
+                                    "name": "Metric1",
+                                    "metricNamespace": "Microsoft.DataFactory/factories",
+                                    "metricName": "ActivityFailedRuns",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Total",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        },
+                        "autoMitigate": true,
+                        "targetResourceType": "Microsoft.DataFactory/factories"
+                    }
+                }
+            ]
+        },
+        "egtopic_metricAlerts": {
+            "value": [
+                {
+                    "name": "Delivery Failed Events exceeded the threshold",
+                    "location": "global",
+                    "properties": {
+                        "description": "EventGrid could not deliver the topic",
+                        "severity": 2,
+                        "enabled": true,
+                        "evaluationFrequency": "PT1H",
+                        "windowSize": "PT1H",
+                        "criteria": {
+                            "allOf": [
+                                {
+                                    "threshold": 10,
+                                    "name": "Metric1",
+                                    "metricNamespace": "Microsoft.EventGrid/systemTopics",
+                                    "metricName": "DeliveryAttemptFailCount",
+                                    "dimensions": [],
+                                    "operator": "GreaterThan",
+                                    "timeAggregation": "Total",
+                                    "criterionType": "StaticThresholdCriterion"
+                                }
+                            ],
+                            "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                        },
+                        "autoMitigate": true,
+                        "targetResourceType": "Microsoft.EventGrid/systemTopics"
+                    }
+                }
+            ]
+        }
+    }
+}
