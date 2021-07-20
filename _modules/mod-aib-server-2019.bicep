@@ -79,7 +79,7 @@ resource imageTemplateName_resource 'Microsoft.VirtualMachineImages/imageTemplat
         runAsSystem: true
         runElevated: true
         inline: [
-          'choco install pwsh git az.powershell azure-cli bicep azcopy10 dotnetcore choco install dotnetcore-sdk dotnet4.7 azure-functions-core-tools-3 --yes --no-progress'
+          'choco install pwsh git az.powershell azure-cli bicep azcopy10 dotnetcore choco dotnetcore-sdk dotnet4.7 azure-functions-core-tools-3 --yes --no-progress'
           'Write-Host "Choco tool install completed!"'
         ]
       }
