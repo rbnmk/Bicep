@@ -88,18 +88,6 @@ resource imageTemplateName_resource 'Microsoft.VirtualMachineImages/imageTemplat
         ]
       }
       {
-        type: 'PowerShell'
-        name: 'Install PowerShell Modules'
-        runAsSystem: true
-        runElevated: true
-        inline: [
-          'Install-Module Pester -Force'
-          'Install-Module MarkdownPS -Force'
-          'Install-Module SqlServer -Force'
-          'Install-Module VSSetup -Force'
-        ]
-      }
-      {
         type: 'WindowsRestart'
         restartTimeout: '10m'
       }
