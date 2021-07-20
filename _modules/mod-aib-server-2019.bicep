@@ -72,10 +72,6 @@ resource imageTemplateName_resource 'Microsoft.VirtualMachineImages/imageTemplat
           'choco feature enable -n allowGlobalConfirmation'
           'Write-Host "Chocolatey Installed"'
         ]
-        validExitCodes: [
-          0
-          3010
-        ]
       }
       {
         type: 'PowerShell'
@@ -85,6 +81,10 @@ resource imageTemplateName_resource 'Microsoft.VirtualMachineImages/imageTemplat
         inline: [
           'choco install pwsh git az.powershell azure-cli bicep azcopy10 dotnetcore dotnetcore-sdk dotnet4.7 azure-functions-core-tools-3 --yes --no-progress'
           'Write-Host "Choco tool install completed!"'
+        ]
+        validExitCodes: [
+          0
+          3010
         ]
       }
       {
