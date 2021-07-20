@@ -72,6 +72,10 @@ resource imageTemplateName_resource 'Microsoft.VirtualMachineImages/imageTemplat
           'choco feature enable -n allowGlobalConfirmation'
           'Write-Host "Chocolatey Installed"'
         ]
+        validExitCodes: [
+          0
+          3010
+        ]
       }
       {
         type: 'PowerShell'
