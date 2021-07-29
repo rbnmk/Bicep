@@ -1,4 +1,4 @@
-name: Azure Image Builder
+name: VNET
 
 # Controls when the workflow will run
 on:
