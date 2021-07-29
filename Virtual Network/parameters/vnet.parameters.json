@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnet": {
+      "value": {
+        "vnet": {
+          "name": "shared-vnet",
+          "addressPrefixes": [
+            "10.248.0.0/16"
+          ],
+          "resourceGroup": "shared",
+          "subnets": [
+            {
+              "name": "buildagents",
+              "addressPrefix": "10.248.10.0/24",
+              "nsgName": "",
+              "routeTableName": "",
+              "privateEndpointNetworkPolicies": "",
+              "privateLinkServiceNetworkPolicies": "",
+              "delegations": [],
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.Storage",
+                  "locations": [
+                    "*"
+                  ]
+                },
+                {
+                  "service": "Microsoft.Sql",
+                  "locations": [
+                    "*"
+                  ]
+                },
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "*"
+                  ]
+                },
+                {
+                  "service": "Microsoft.Web",
+                  "locations": [
+                    "*"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "sessionhosts",
+              "addressPrefix": "10.248.11.0/24",
+              "nsgName": "",
+              "routeTableName": "",
+              "privateEndpointNetworkPolicies": "",
+              "privateLinkServiceNetworkPolicies": "",
+              "delegations": [],
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.Storage",
+                  "locations": [
+                    "*"
+                  ]
+                },
+                {
+                  "service": "Microsoft.Sql",
+                  "locations": [
+                    "*"
+                  ]
+                },
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "*"
+                  ]
+                },
+                {
+                  "service": "Microsoft.Web",
+                  "locations": [
+                    "*"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
