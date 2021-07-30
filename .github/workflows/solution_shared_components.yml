@@ -1,4 +1,4 @@
-name: VNET
+name: shared-components
 
 # Controls when the workflow will run
 on:
@@ -7,6 +7,7 @@ on:
     branches: [ master ]
     paths:
       - '_modules/mod-vnet.bicep'
+      - '_modules/mod-loganalytics.bicep'
       - 'Virtual Network/*'
   pull_request:
     branches: [ master ]
@@ -55,6 +56,12 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: New-AzResourceGroupDeployment -Name bicep-${{ env.GITHUB_RUN_ID }} -ResourceGroupName shared -TemplateFile "_modules/mod-vnet.bicep" -TemplateParameterFile "Virtual Network/parameters/vnet.parameters.json"
+          azPSVersion: 'latest'
+
+      - name: Deploy VNET
+        uses: azure/powershell@v1
+        with:
+          inlineScript: New-AzResourceGroupDeployment -Name bicep-${{ env.GITHUB_RUN_ID }} -ResourceGroupName shared -TemplateFile "_modules/mod-loganalytics.bicep" -logAnalyticsWorkspaceName 'law-shared'
           azPSVersion: 'latest'
       
       

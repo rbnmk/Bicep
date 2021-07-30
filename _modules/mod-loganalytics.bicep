@@ -1,6 +1,6 @@
 targetScope = 'resourceGroup'
 
-param location string = 'westeurope'
+param location string = resourceGroup().location
 param loganalyticsWorkspaceName string
 param loganalyticsRetentionInDays int = 31
 param linkAutomationAccount bool = false
