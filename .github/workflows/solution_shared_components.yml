@@ -61,7 +61,7 @@ jobs:
       - name: Deploy VNET
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzResourceGroupDeployment -Name bicep-${{ env.GITHUB_RUN_ID }} -ResourceGroupName shared -TemplateFile "_modules/mod-loganalytics.bicep" -logAnalyticsWorkspaceName 'law-shared'
+          inlineScript: New-AzResourceGroupDeployment -Name bicep-${{ env.GITHUB_RUN_ID }} -ResourceGroupName shared -TemplateFile "_modules/mod-loganalytics.bicep" -logAnalyticsWorkspaceName 'shared-law'
           azPSVersion: 'latest'
       
       
