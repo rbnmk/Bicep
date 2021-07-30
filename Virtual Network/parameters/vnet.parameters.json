@@ -51,8 +51,8 @@
               "addressPrefix": "10.248.11.0/24",
               "nsgName": "",
               "routeTableName": "",
-              "privateEndpointNetworkPolicies": "",
-              "privateLinkServiceNetworkPolicies": "",
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Disabled",
               "delegations": [],
               "serviceEndpoints": [
                 {
