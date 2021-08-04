@@ -64,7 +64,7 @@ jobs:
           inlineScript: New-AzResourceGroupDeployment -Name shared-law -ResourceGroupName shared -TemplateFile "_modules/mod-loganalytics.bicep" -logAnalyticsWorkspaceName 'shared-law'
           azPSVersion: 'latest'
 
-      - name: Deploy LAW
+      - name: Deploy KEYVAULT
         uses: azure/powershell@v1
         with:
           inlineScript: New-AzResourceGroupDeployment -Name shared-kv -ResourceGroupName shared -TemplateFile "_modules/mod-keyvault.bicep" -keyVaultName 'shared-keyvault' -defaultAction 'Allow'
