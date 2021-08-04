@@ -41,7 +41,7 @@ resource kv 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
     enabledForTemplateDeployment: enabledForTemplateDeployment
     createMode: keyVaultCreateMode
     enableSoftDelete: enableSoftDelete
-    enablePurgeProtection: enablePurgeProtection
+    enablePurgeProtection: enablePurgeProtection ? true : null
     enableRbacAuthorization: enableRbacAuthorization
     sku: {
       name: keyVaultSku
