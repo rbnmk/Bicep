@@ -67,7 +67,7 @@ jobs:
       - name: Deploy KEYVAULT
         uses: azure/powershell@v1
         with:
-          inlineScript: New-AzResourceGroupDeployment -Name shared-kv -ResourceGroupName shared -TemplateFile "_modules/mod-keyvault.bicep" -keyVaultName 'shared-keyvault' -defaultAction 'Allow'
+          inlineScript: New-AzResourceGroupDeployment -Name shared-kv -ResourceGroupName shared -TemplateFile "_modules/mod-keyvault.bicep" -keyVaultName 'shredded-keyvault' -defaultAction 'Allow'
           azPSVersion: 'latest'
       
       
