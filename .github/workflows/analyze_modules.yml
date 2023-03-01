@@ -1,8 +1,8 @@
 name: Analyze Bicep Modules
 on:
+  schedule:
+    - cron: 20 4 * * *
   push:
-    branches: ["main"]
-  pull_request:
     branches: ["main"]
 jobs:
   analyze_arm:
