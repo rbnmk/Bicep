@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "PSRule",
+            "problemMatcher": [
+                "$PSRule"
+            ],
+            "label": "PSRule: Run analysis",
+            "modules": [
+                "PSRule.Rules.Azure"
+            ],
+            "presentation": {
+                "clear": true,
+                "panel": "dedicated"
+            },
+            "outcome": [
+                "Fail",
+                "Error",
+                "Pass"
+            ]
+        }
+    ]
+}

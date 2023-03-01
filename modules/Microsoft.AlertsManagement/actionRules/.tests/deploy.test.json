@@ -37,6 +37,11 @@
           "values": ["CPU Average percentage exceeded threshold"]
         }
       ]
+    },
+    "tags": {
+      "value": {
+        "environment": "production"
+      }
     }
   }
 }
