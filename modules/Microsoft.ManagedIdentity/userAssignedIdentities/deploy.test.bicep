@@ -2,7 +2,9 @@ targetScope = 'resourceGroup'
 
 param managedidentityName string = 'managedidentityName'
 param location string = resourceGroup().location
-param tags object = {}
+param tags object = {
+  environment: 'psrule'
+}
 
 module minimal 'deploy.bicep' = {
   name: managedidentityName
