@@ -8,7 +8,9 @@
             ],
             "label": "PSRule: Run analysis",
             "modules": [
-                "PSRule.Rules.Azure"
+                "PSRule.Rules.Azure",
+                "PSRule.Rules.CAF",
+                "PSRule.Rules.Kubernetes"
             ],
             "presentation": {
                 "clear": true,

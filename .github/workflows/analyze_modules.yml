@@ -5,17 +5,22 @@ on:
   push:
     branches: ["main"]
 jobs:
-  analyze_arm:
-    name: Analyze templates
+  static_analysis:
+    name: Static Analysis
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout
         uses: actions/checkout@v3
 
+      - name: 🏃‍♂️ Install Required PSRule modules
+        shell: pwsh
+        run: |
+          Install-Module -Name 'PSRule.Rules.CAF' -Repository PSGallery -Scope CurrentUser -Force
+          Install-Module -Name 'PSRule.Rules.Kubernetes' -Repository PSGallery -Scope CurrentUser -Force
+
       - name: 📈 Analyze Azure template files
         uses: microsoft/ps-rule@v2.7.0
         with:
-          modules: 'PSRule.Rules.Azure'
           option: ps-rule.yaml
           outputFormat: Sarif
           outputPath: reports/ps-rule-results.sarif
@@ -25,3 +30,24 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: reports/ps-rule-results.sarif
+
+  # test_templates:
+  #   name: Static Analysis
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: ⬇️ Checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: 📈 Analyze Azure template files
+  #       uses: microsoft/ps-rule@v2.7.0
+  #       with:
+  #         modules: 'PSRule.Rules.Azure'
+  #         option: ps-rule.yaml
+  #         outputFormat: Sarif
+  #         outputPath: reports/ps-rule-results.sarif
+
+  #     - name: ⬆️ Upload results to security tab
+  #       if: success() || failure()
+  #       uses: github/codeql-action/upload-sarif@v2
+  #       with:
+  #         sarif_file: reports/ps-rule-results.sarif
