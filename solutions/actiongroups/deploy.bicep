@@ -2,17 +2,15 @@ targetScope = 'resourceGroup'
 
 @description('')
 param actionGroups array
-
-param tags object = {}
+param suffixId string = utcNow()
 
 var filteredActionGroups = filter(actionGroups, value => contains(value.enabledForsubscriptionIds, subscription().subscriptionId) || contains(value.enabledForsubscriptionIds, 'All'))
 
-resource actionGroup 'Microsoft.Insights/actionGroups@2022-06-01' = [for actionGroup in filteredActionGroups: {
-  name: actionGroup.name
-  location: 'Global'
-  tags: tags
-  properties: {
-    groupShortName: contains(actionGroup.properties, 'shortName') ? actionGroup.properties.shortName : take(replace(actionGroup.name, '-', ''), 12)
+module actionGroup '../../modules/Microsoft.Insights/actionGroups/deploy.bicep' = [for actionGroup in actionGroups: {
+  name: 'deploy-ag-${actionGroup.name}-${suffixId}'
+  params: {
+    actionGroupName: actionGroup.name
+    actionGroupShortName: contains(actionGroup.properties, 'shortName') ? actionGroup.properties.shortName : take(replace(actionGroup.name, '-', ''), 12)
     enabled: contains(actionGroup.properties, 'enabled') ? actionGroup.properties.Enabled : false
     emailReceivers: contains(actionGroup.properties, 'emailReceivers') ? actionGroup.properties.emailReceivers : []
     smsReceivers: contains(actionGroup.properties, 'smsReceivers') ? actionGroup.properties.smsReceivers : []
@@ -24,13 +22,14 @@ resource actionGroup 'Microsoft.Insights/actionGroups@2022-06-01' = [for actionG
     logicAppReceivers: contains(actionGroup.properties, 'logicAppReceivers') ? actionGroup.properties.logicAppReceivers : []
     azureFunctionReceivers: contains(actionGroup.properties, 'azureFunctionReceivers') ? actionGroup.properties.azureFunctionReceivers : []
     armRoleReceivers: contains(actionGroup.properties, 'armRoleReceivers') ? actionGroup.properties.armRoleReceivers : []
+    tags: contains(actionGroup, 'tags') ? actionGroup.tags : {}
   }
 }]
 
 output created_actionGroups array = [for (ag, i) in filteredActionGroups: {
-  name: actionGroup[i].name
-  id: actionGroup[i].id
-  properties: actionGroup[i].properties
+  name: actionGroup[i].outputs.actionGroupName
+  id: actionGroup[i].outputs.actionGroupId
+  properties: actionGroup[i].outputs.actionGroupProperties
   enabledForSubscriptionIds: actionGroups[i].enabledForSubscriptionIds
   resourceGroup: resourceGroup().name
   subscriptionId: subscription().subscriptionId

@@ -7,6 +7,9 @@ param actionGroupName string
 @maxLength(12)
 param actionGroupShortName string
 
+@description('Enable or disable the action group.')
+param enabled bool = true
+
 @description('The list of email receivers that are part of this action group.')
 param emailReceivers array = [
   {
@@ -51,7 +54,7 @@ resource actionGroup 'Microsoft.Insights/actionGroups@2022-06-01' = {
   tags: tags
   properties: {
     groupShortName: actionGroupShortName
-    enabled: true
+    enabled: enabled
     emailReceivers: emailReceivers
     smsReceivers: smsReceivers
     webhookReceivers: webhookReceivers
@@ -67,5 +70,6 @@ resource actionGroup 'Microsoft.Insights/actionGroups@2022-06-01' = {
 
 output actionGroupId string = actionGroup.id
 output actionGroupName string = actionGroup.name
+output actionGroupProperties object = actionGroup.properties
 output actionGroupResourceGroupName string = resourceGroup().name
 output actionGroupSubscriptionId string = subscription().subscriptionId

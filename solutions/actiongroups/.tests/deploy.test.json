@@ -10,6 +10,9 @@
         {
           "name": "Azure Monitor",
           "enabledForSubscriptionIds": ["All"],
+          "tags": {
+            "environment": "test"
+          },
           "properties": {
             "enabled": true,
             "shortName": "AzMon",
