@@ -84,6 +84,9 @@
         },
         "max-variables": {
           "level": "error"
+        },
+        "use-parent-property":{
+          "level": "warning"
         }
       }
     }

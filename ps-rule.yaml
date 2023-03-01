@@ -8,6 +8,9 @@ suppression:
   Azure.Storage.UseReplication:
   - storageaccount1
   
+rule:
+  includeLocal: true
+
 input:
   format: Detect
   ignoreGitPath: true
@@ -20,8 +23,12 @@ input:
     # Do not ignore tests.
     - '!modules/**/*.tests.bicep'
     - '!modules/**/*.test.json'
+    - '!solutions/**/*.tests.bicep'
+    - '!solutions/**/*.test.json'
 
-output:
+output: 
+  style: Detect
+  banner: Title
   culture:
     - en-US
 

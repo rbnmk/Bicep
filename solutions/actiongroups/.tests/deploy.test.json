@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "template": "../deploy.bicep"
+  },
+  "parameters": {
+    "actionGroups": {
+      "value": [
+        {
+          "name": "Azure Monitor",
+          "enabledForSubscriptionIds": ["All"],
+          "properties": {
+            "enabled": true,
+            "shortName": "AzMon",
+            "emailReceivers": [
+              {
+                "name": "Azure Monitoring",
+                "emailAddress": "azmon@example.com",
+                "useCommonAlertSchema": "True"
+              }
+            ],
+            "webhookReceivers": []
+          }
+        }
+      ]
+    }
+  }
+}
