@@ -1,13 +1,13 @@
 targetScope = 'resourceGroup'
 
-param managedidentityName string
+param managedidentityName string = 'managedidentityName'
 param location string = resourceGroup().location
 param tags object = {}
 
 module minimal 'deploy.bicep' = {
   name: managedidentityName
   params: {
-    managedidentityName: 'managedIdentity'
+    managedidentityName: managedidentityName
     location: location
   }
 }
@@ -15,7 +15,7 @@ module minimal 'deploy.bicep' = {
 module complete 'deploy.bicep' = {
   name: managedidentityName
   params: {
-    managedidentityName: 'managedIdentity'
+    managedidentityName: managedidentityName
     location: location
     tags: tags
   }
