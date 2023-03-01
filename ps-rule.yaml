@@ -8,7 +8,6 @@ suppression:
   Azure.Storage.UseReplication:
   - storageaccount1
   
-
 input:
   format: Detect
   ignoreGitPath: true
@@ -19,7 +18,7 @@ input:
     # Ignore other files in the repository.
     - '**/*'
     # Do not ignore tests.
-    - '!modules/**/*.test.bicep'
+    - '!modules/**/*.tests.bicep'
     - '!modules/**/*.test.json'
 
 output:
