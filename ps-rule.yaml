@@ -1,0 +1,26 @@
+include:
+  module:
+    - PSRule.Rules.CAF
+    - PSRule.Rules.Azure
+    - PSRule.Monitor
+
+input:
+  format: Detect
+  ignoreGitPath: true
+  ignoreRepositoryCommon: true
+  ignoreObjectSource: false
+  ignoreUnchangedPath: false
+  pathIgnore:
+    # Ignore other files in the repository.
+    - '**/*'
+    # Do not ignore tests.
+    - '!modules/**/*.test.bicep'
+
+output:
+  culture:
+    - en-US
+
+configuration:
+  AZURE_BICEP_FILE_EXPANSION: true
+  AZURE_PARAMETER_FILE_EXPANSION: true
+  AZURE_BICEP_FILE_EXPANSION_TIMEOUT: 30

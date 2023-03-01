@@ -4,3 +4,4 @@ __azurite_db_blob__.json
 __blobstorage__
 workspace.code-workspace
 .vscode/launch.json
+_old
