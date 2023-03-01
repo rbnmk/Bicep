@@ -21,10 +21,10 @@ input:
     # Ignore other files in the repository.
     - '**/*'
     # Do not ignore tests.
-    - '!modules/**/*.tests.bicep'
-    - '!modules/**/*.test.json'
     - '!solutions/**/*.tests.bicep'
     - '!solutions/**/*.test.json'
+    - '!modules/**/*.tests.bicep'
+    - '!modules/**/*.test.json'
 
 output: 
   style: Detect
