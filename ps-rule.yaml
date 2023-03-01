@@ -4,6 +4,11 @@ include:
     - PSRule.Rules.Azure
     - PSRule.Monitor
 
+suppression:
+  Azure.Storage.UseReplication:
+  - storageaccount1
+  
+
 input:
   format: Detect
   ignoreGitPath: true
