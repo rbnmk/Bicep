@@ -9,7 +9,7 @@ suppression:
   - storageaccount1
   
 rule:
-  includeLocal: true
+  includeLocal: false
 
 input:
   format: Detect
