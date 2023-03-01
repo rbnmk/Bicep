@@ -1,1 +1,1 @@
-# Bicep related files
+# Bicep template repository

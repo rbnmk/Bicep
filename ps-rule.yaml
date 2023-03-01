@@ -15,6 +15,7 @@ input:
     - '**/*'
     # Do not ignore tests.
     - '!modules/**/*.test.bicep'
+    - '!modules/**/*.test.json'
 
 output:
   culture:

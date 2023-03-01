@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "template": "./deploy.bicep"
+  },
+  "parameters": {
+    "actionruleName": {
+      "value": "Bicep Alert Processing Rule 1"
+    },
+    "actionRuleType": {
+      "value": "RemoveAllActionGroups"
+    },
+    "actionruleScope": {
+      "value": "Subscription"
+    },
+    "actionruleRecurrenceType": {
+      "value": "Once"
+    },
+    "actionruleEffectiveFrom": {
+      "value": "07/02/2023"
+    },
+    "actionruleEffectiveUntil": {
+      "value": "07/02/2024"
+    },
+    "actionruleStartTime": {
+      "value": "11:00:00"
+    },
+    "actionruleEndTime": {
+      "value": "21:00:00"
+    },
+    "actionRuleConditions": {
+      "value": [
+        {
+          "field": "AlertRuleName",
+          "operator": "Equals",
+          "values": ["CPU Average percentage exceeded threshold"]
+        }
+      ]
+    }
+  }
+}
