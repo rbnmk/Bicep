@@ -12,11 +12,11 @@ jobs:
       - name: ⬇️ Checkout
         uses: actions/checkout@v3
 
-      - name: 🏃‍♂️ Install Required PSRule modules
-        shell: pwsh
-        run: |
-          Install-Module -Name 'PSRule.Rules.CAF' -Repository PSGallery -Scope CurrentUser -Force
-          Install-Module -Name 'PSRule.Rules.Kubernetes' -Repository PSGallery -Scope CurrentUser -Force
+      # - name: 🏃‍♂️ Install Required PSRule modules
+      #   shell: pwsh
+      #   run: |
+      #     Install-Module -Name 'PSRule.Rules.CAF' -Repository PSGallery -Scope CurrentUser -Force
+      #     Install-Module -Name 'PSRule.Rules.Kubernetes' -Repository PSGallery -Scope CurrentUser -Force
 
       - name: 📈 Analyze Azure template files
         uses: microsoft/ps-rule@v2.7.0
