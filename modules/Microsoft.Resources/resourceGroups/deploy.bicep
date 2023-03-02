@@ -21,9 +21,9 @@ module resourceGroupRoleAssignment '../../Microsoft.Authorization/roleAssignment
   scope: resourceGroup
   name: take('rg-role-${i + 1}-${resourceGroup.name}-${roleassignment.principalId}', 64)
   params: {
-    parAssigneeObjectId: roleassignment.principalId
-    parAssigneePrincipalType: contains(roleassignment, 'principalType') ? roleassignment.PrincipalType : 'Group'
-    parRoleDefinitionId: roleassignment.roleDefinitionId
+    principalId: roleassignment.principalId
+    principalType: contains(roleassignment, 'principalType') ? roleassignment.PrincipalType : 'Group'
+    roleDefinitionId: roleassignment.roleDefinitionId
   }
 }]
 
